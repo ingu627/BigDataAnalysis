@@ -104,9 +104,10 @@ df_pred$default = ifelse(
 df_pred$default = as.factor(df_pred$default)
 
 # 분석 모형 평가 - 혼동 행렬
+library(caret)
 confusionMatrix(
     data=df_pred$default,
-    reference = bankruptcy_test[,1]) # -> 에러가 남
+    reference = bankruptcy_test[,1])
 
 library(ModelMetrics)
 auc(actual=bankruptcy_test[,1], predicted=df_pred$default)
