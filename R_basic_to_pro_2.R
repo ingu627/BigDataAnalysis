@@ -16,10 +16,27 @@ library(dplyr)
 iris %>% 
     select(Sepal.Length) %>% head()
 
+# 1          5.1
+# 2          4.9
+# 3          4.7
+# 4          4.6
+# 5          5.0
+# 6          5.4
+
 # filter()
 # `데이터 프레임 이름 %>% filter(조건)` : 조건에 맞는 데이터 추출
 
-iris %>% filter(Species == 'setosa') %>% select(Sepal.Length, Sepal.Width) %>% head()
+iris %>% 
+    filter(Species == 'setosa') %>% 
+    select(Sepal.Length, Sepal.Width) %>% 
+    head()
+# 1          5.1         3.5
+# 2          4.9         3.0
+# 3          4.7         3.2
+# 4          4.6         3.1
+# 5          5.0         3.6
+# 6          5.4         3.9
+
 
 # mutate()
 
@@ -29,6 +46,13 @@ iris %>%
     mutate(Len = ifelse(Sepal.Length>6, 'L', 'S')) %>% 
     select(Species, Len) %>% 
     head()
+#     Species Len
+# 1 virginica   L
+# 2 virginica   S
+# 3 virginica   L
+# 4 virginica   L
+# 5 virginica   L
+# 6 virginica   L
 
 # group_by와 summarise 함수
 
@@ -38,6 +62,13 @@ iris %>%
 iris %>% 
     group_by(Species) %>% 
     summarise(Petal.Width = mean(Petal.Width))
+# # A tibble: 3 x 2
+#   Species    Petal.Width
+#   <fct>            <dbl>
+# 1 setosa           0.246
+# 2 versicolor       1.33
+# 3 virginica        2.03
+
 
 # arrange 함수
 
@@ -48,7 +79,16 @@ iris %>%
     filter(Species == 'setosa') %>% 
     mutate(Len = ifelse(Sepal.Length>5, 'L', 'S')) %>% 
     select(Species, Len, Sepal.Length) %>% 
-    arrange(desc(Sepal.Length))
+    arrange(desc(Sepal.Length)) %>% 
+    head()
+#   Species Len Sepal.Length
+# 1  setosa   L          5.8
+# 2  setosa   L          5.7
+# 3  setosa   L          5.7
+# 4  setosa   L          5.5
+# 5  setosa   L          5.5
+# 6  setosa   L          5.4
+
 
 # join 함수 
 
@@ -62,9 +102,24 @@ iris %>%
 
 x = data.frame(x=1:3, y=1:3)
 x
+#   x y
+# 1 1 1
+# 2 2 2
+# 3 3 3
 y = data.frame(x=4:6, z=4:6)
 y
+#   x z
+# 1 4 4
+# 2 5 5
+# 3 6 6
 bind_rows(x, y)
+#   x  y  z
+# 1 1  1 NA
+# 2 2  2 NA
+# 3 3  3 NA
+# 4 4 NA  4
+# 5 5 NA  5
+# 6 6 NA  6
 
 # bind_cols()
 
@@ -73,9 +128,27 @@ bind_rows(x, y)
 x = data.frame(title=c(1:5),
                 a=c(30,70,45,90,65))
 x
+#   title  a
+# 1     1 30
+# 2     2 70
+# 3     3 45
+# 4     4 90
+# 5     5 65
 y = data.frame(b=c(70,65,80,80,90))
 y
-bind_cols(x, y)                
+#    b
+# 1 70
+# 2 65
+# 3 80
+# 4 80
+# 5 90
+bind_cols(x, y)   
+#   title  a  b
+# 1     1 30 70
+# 2     2 70 65
+# 3     3 45 80
+# 4     4 90 80
+# 5     5 65 90             
 
 
 
