@@ -56,3 +56,58 @@ insurance %>%
 
 # 14. Train.csv
 
+Train=read.csv('./data/Train.csv', encoding='utf-8')
+head(Train)
+str(Train)
+summary(Train)
+nrow(Train)
+length(Train)
+
+idx=sample(1:nrow(Train), 0.7*nrow(Train))
+
+x_train = Train[idx, c(-1,-12)]
+y_train = Train[idx, 12] 
+x_test = Train[-idx, c(-1,-12)]
+y_test = Train[-idx, 12]
+
+sum(is.na(Train))
+
+y_train = data.frame(Reached.on.Time_Y.N=as.factor(y_train))
+y_test = data.frame(Reached.on.Time_Y.N=as.factor(y_test))
+
+for (i in c(1,2,7,8)){
+    x_train[,i] = as.factor(x_train[,i])
+    x_test[,i] = as.factor(x_test[,i])
+}
+str(x_train)
+str(y_train)
+
+model=glm(y_train$Reached.on.Time_Y.N ~ ., data=x_train, family=binomial)
+summary(model)
+
+library(caret)
+step_model = step(model, direction='both')
+summary(step_model)
+
+library(car)
+vif(step_model)
+
+pred = predict(
+    step_model,
+    newdata = x_test
+)
+df_pred = data.frame(pred)
+
+head(df_pred)
+df_pred$pred = ifelse(
+    df_pred$pred >= 0.5,
+    df_pred$pred <- 0,
+    df_pred$pred <- 1)
+
+df_pred$pred = as.factor(df_pred$pred)
+
+library(caret)
+confusionMatrix(df_pred,y_test)
+
+library(ModelMetrics)
+auc(y_test$Reached.on.Time_Y.N, df_pred$pred)
