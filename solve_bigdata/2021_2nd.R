@@ -19,7 +19,7 @@ print(result)
 
 # 12. housing
 
-housing = read.csv('./data/housing.csv', header=TRUE)
+housing = read.csv('./2021_2nd_data/housing.csv', header=TRUE)
 head(housing)
 str(housing)
 nrow(housing)
@@ -35,7 +35,7 @@ print(abs(before_sd - after_sd))
 
 # 13. insurance
 
-insurance=read.csv('./data/insurance.csv')
+insurance=read.csv('./2021_2nd_data/insurance.csv')
 head(insurance)
 str(insurance)
 summary(insurance)
@@ -56,7 +56,7 @@ insurance %>%
 
 # 14. Train.csv
 
-Train=read.csv('./data/Train.csv', encoding='utf-8')
+Train=read.csv('./2021_2nd_data/Train.csv', encoding='utf-8')
 head(Train)
 str(Train)
 summary(Train)
