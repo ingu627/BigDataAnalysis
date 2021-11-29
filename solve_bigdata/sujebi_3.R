@@ -121,3 +121,51 @@ auc(y_test$Churn, pred1) # 0.6890504
 write.csv(pred, 'y_test.csv', row.names=FALSE)
 
 
+# 3. loan
+
+loan=read.csv('sujebi_data/Loan payments data.csv', stringsAsFactors=TRUE)
+head(loan)
+str(loan)
+summary(loan) # past_due_days : NA 값 300개
+dim(loan)
+
+loan$past_due_days[is.na(loan$past_due_days)] <- 0
+loan$loan_status = ifelse(loan$loan_status == "PAIDOFF", 'Success', 'Failure')
+loan$loan_status = as.factor(loan$loan_status)
+
+library(caret)
+idx=createDataPartition(loan$loan_status, p=0.7)
+str(idx) # Resample1
+X_train = loan[idx$Resample1,]
+y_train = loan[idx$Resample1,]
+X_test = loan[-idx$Resample1,]
+y_test = loan[-idx$Resample1,]
+dim(X_train)
+
+pre_x_train = preProcess(X_train, method='range')
+pre_x_test = preProcess(X_test, method='range')
+
+scaled_x_train = predict(pre_x_train, X_train)
+scaled_x_test = predict(pre_x_test, X_test)
+dim(scaled_x_train)
+
+y_train$loan_status = as.factor(y_train$loan_status)
+y_test$loan_status = as.factor(y_test$loan_status)
+dim(y_train)
+
+library(e1071)
+model_svm=svm(y_train$loan_status ~ .-Loan_ID, data=scaled_x_train)
+summary(model_svm)
+
+pred = predict(model_svm, X_train, type='class')
+library(ModelMetrics)
+auc(y_train$loan_status, pred) # 0.5
+
+
+pred_svm = predict(model_svm, X_test)
+
+library(ModelMetrics)
+
+
+
+

@@ -11,11 +11,16 @@
 
 <br/>
 
-- **해당 링크**
-- [R_basic_to_pro_1](https://ingu627.github.io/r/R_basic_to_pro_1/)
-- [R_basic_to_pro_2](https://ingu627.github.io/r/R_basic_to_pro_2/)
-- [R_basic_to_pro_3](https://ingu627.github.io/r/R_basic_to_pro_3/)
-- [R_basic_to_pro_4](https://ingu627.github.io/r/R_basic_to_pro_4/)
-- [R_basic_to_pro_5](https://ingu627.github.io/r/R_basic_to_pro_5/)
-- [R_basic_to_pro_6](https://ingu627.github.io/r/R_basic_to_pro_6/)
-- [R_basic_to_pro_7](https://ingu627.github.io/r/R_basic_to_pro_7/)
+- `must_learning_with_R` : 문법 및 시각화 함수들 정리
+  - reference : [https://wikidocs.net/book/4315](https://wikidocs.net/book/4315)
+- `concept` : 빅데이터 분석기사 대비용 R 기초 문법부터 머신러닝까지 정리
+  - [R_basic_to_pro_1](https://ingu627.github.io/r/R_basic_to_pro_1/)
+  - [R_basic_to_pro_2](https://ingu627.github.io/r/R_basic_to_pro_2/)
+  - [R_basic_to_pro_3](https://ingu627.github.io/r/R_basic_to_pro_3/)
+  - [R_basic_to_pro_4](https://ingu627.github.io/r/R_basic_to_pro_4/)
+  - [R_basic_to_pro_5](https://ingu627.github.io/r/R_basic_to_pro_5/)
+  - [R_basic_to_pro_6](https://ingu627.github.io/r/R_basic_to_pro_6/)
+  - [R_basic_to_pro_7](https://ingu627.github.io/r/R_basic_to_pro_7/)
+- `sujebi_data` : 빅데이터분석기사 실기 (필답형 + 작업형) 수제비 책에 있는 문제 풀이
+  - `2021_2nd.R` : 2021년 2회 기출문제 전체 풀이
+  - `sujebi_1 ~ 3.R` : 수제비에 있는 작업형 문제 풀이
