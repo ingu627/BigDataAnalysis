@@ -21,8 +21,8 @@ dim(X_test)
 
 library(caret)
 
-X_train[is.na(X_train$환불금액),]$환불금액 <- 0
-X_test[is.na(X_test$환불금액),]$환불금액 <- 0
+X_train$환불금액[is.na(X_train$환불금액)] <- 0
+X_test$환불금액[is.na(X_test$환불금액)] <- 0
 
 pre_X_train = preProcess(X_train, method="range")
 pre_X_test = preProcess(X_test, method="range")
@@ -121,51 +121,37 @@ auc(y_test$Churn, pred1) # 0.6890504
 write.csv(pred, 'y_test.csv', row.names=FALSE)
 
 
-# 3. loan
+# 3. mtcars
 
-loan=read.csv('sujebi_data/Loan payments data.csv', stringsAsFactors=TRUE)
-head(loan)
-str(loan)
-summary(loan) # past_due_days : NA 값 300개
-dim(loan)
-
-loan$past_due_days[is.na(loan$past_due_days)] <- 0
-loan$loan_status = ifelse(loan$loan_status == "PAIDOFF", 'Success', 'Failure')
-loan$loan_status = as.factor(loan$loan_status)
+data(mtcars)
+head(mtcars)
+str(mtcars)
+summary(mtcars)
+dim(mtcars)
 
 library(caret)
-idx=createDataPartition(loan$loan_status, p=0.7)
-str(idx) # Resample1
-X_train = loan[idx$Resample1,]
-y_train = loan[idx$Resample1,]
-X_test = loan[-idx$Resample1,]
-y_test = loan[-idx$Resample1,]
-dim(X_train)
+idx=createDataPartition(mtcars$mpg, p=0.7)
+str(idx)
+x_train = mtcars[idx$Resample1, ]
+x_test = mtcars[-idx$Resample1, ]
 
-pre_x_train = preProcess(X_train, method='range')
-pre_x_test = preProcess(X_test, method='range')
+prePro_x_train = preProcess(x_train, method='range')
+prePro_x_test = preProcess(x_test, method='range')
 
-scaled_x_train = predict(pre_x_train, X_train)
-scaled_x_test = predict(pre_x_test, X_test)
-dim(scaled_x_train)
+scaled_x_train = predict(prePro_x_train, x_train)
+scaled_x_test = predict(prePro_x_test, x_test)
 
-y_train$loan_status = as.factor(y_train$loan_status)
-y_test$loan_status = as.factor(y_test$loan_status)
-dim(y_train)
+full_model = lm(mpg ~ ., data=scaled_x_train)
+summary(full_model)
 
-library(e1071)
-model_svm=svm(y_train$loan_status ~ .-Loan_ID, data=scaled_x_train)
-summary(model_svm)
+step_model = step(full_model, direction='both')
+summary(step_model)
 
-pred = predict(model_svm, X_train, type='class')
-library(ModelMetrics)
-auc(y_train$loan_status, pred) # 0.5
+md_model = lm(mpg ~ disp+am+carb, data=scaled_x_train)
+summary(md_model)
 
-
-pred_svm = predict(model_svm, X_test)
+pred_lm=predict(md_model, newdata=scaled_x_test[, -1])
 
 library(ModelMetrics)
-
-
-
-
+rmse_lm = rmse(scaled_x_test$mpg, pred_lm)
+print(rmse_lm) # 0.189796

@@ -56,58 +56,68 @@ insurance %>%
 
 # 14. Train.csv
 
-Train=read.csv('./2021_2nd_data/Train.csv', encoding='utf-8')
+Train=read.csv('2021_2nd_data/Train.csv', stringsAsFactors=TRUE)
 head(Train)
 str(Train)
 summary(Train)
-nrow(Train)
+dim(Train)
 length(Train)
-
-idx=sample(1:nrow(Train), 0.7*nrow(Train))
-
-x_train = Train[idx, c(-1,-12)]
-y_train = Train[idx, 12] 
-x_test = Train[-idx, c(-1,-12)]
-y_test = Train[-idx, 12]
 
 sum(is.na(Train))
 
-y_train = data.frame(Reached.on.Time_Y.N=as.factor(y_train))
-y_test = data.frame(Reached.on.Time_Y.N=as.factor(y_test))
+names(Train)[1] <- c("ID")
 
-for (i in c(1,2,7,8)){
-    x_train[,i] = as.factor(x_train[,i])
-    x_test[,i] = as.factor(x_test[,i])
-}
-str(x_train)
-str(y_train)
-
-model=glm(y_train$Reached.on.Time_Y.N ~ ., data=x_train, family=binomial)
-summary(model)
+Train$Reached.on.Time_Y.N = as.factor(Train$Reached.on.Time_Y.N)
+str(Train$Reached.on.Time_Y.N)
 
 library(caret)
-step_model = step(model, direction='both')
-summary(step_model)
+idx=createDataPartition(Train$Reached.on.Time_Y.N, 0.7)
+str(idx)
+x_train = Train[idx$Resample1,]
+x_test = Train[-idx$Resample1,]
 
-library(car)
-vif(step_model)
+prePro_xtrain = preProcess(x_train, method='range')
+prePro_xtest = preProcess(x_test, method='range')
 
-pred = predict(
-    step_model,
-    newdata = x_test
-)
-df_pred = data.frame(pred)
+scaled_x_train = predict(prePro_xtrain, x_train)
+scaled_x_test = predict(prePro_xtest, x_test)
 
-head(df_pred)
-df_pred$pred = ifelse(
-    df_pred$pred >= 0.5,
-    df_pred$pred <- 0,
-    df_pred$pred <- 1)
+# 로지스틱 회귀분석
+model_glm = glm(Reached.on.Time_Y.N ~ .-ID, data=scaled_x_train, family='binomial')
+summary(model_glm)
 
-df_pred$pred = as.factor(df_pred$pred)
+model_step = step(model_glm, direction='both')
+summary(model_step)
 
-library(caret)
-confusionMatrix(df_pred,y_test)
+pred_glm = predict(model_step, newdata=scaled_x_test[, -12], type='response')
+
+pred_glm = ifelse(pred_glm >= 0.5, 1, 0)
+
+confusionMatrix(pred_glm, x_test$Reached.on.Time_Y.N)
 
 library(ModelMetrics)
-auc(y_test$Reached.on.Time_Y.N, df_pred$pred)
+auc(x_test$Reached.on.Time_Y.N, pred_glm) # 0.6187506
+
+# 랜덤포레스트
+library(randomForest)
+model_rf=randomForest(Reached.on.Time_Y.N ~ .-ID, data=scaled_x_train, ntree=300)
+summary(model_rf)
+
+library(caret)
+pred_rf = predict(model_rf, newdata=scaled_x_test[, -12], type='response')
+
+confusionMatrix(pred_rf, x_test$Reached.on.Time_Y.N) # Accuracy : 0.6599
+
+library(ModelMetrics)
+auc(x_test$Reached.on.Time_Y.N, pred_rf) # 0.662148
+
+
+total=as.data.frame(cbind(x_test$ID, pred_rf))
+names(total) <- c('ID', 'Reached.on.Time_Y.N')
+head(total)
+summary(total)
+write.csv(total, 'Train_result.csv', row.names=FALSE)
+
+
+
+
